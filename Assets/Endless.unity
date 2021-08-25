@@ -199,7 +199,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 466800707}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -879,6 +879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f50ff7e6155062b4e906912d28b1933e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  red: {fileID: 2100000, guid: 730a8ee97b4726844acd698af2490dbf, type: 2}
+  blue: {fileID: 2100000, guid: 63944d736aad4e8409f8b722f1bd10c4, type: 2}
   movement: {fileID: 1808384867}
   scoreCounter: {fileID: 609322372}
   Cube: {fileID: 1554701512911550, guid: 20042ef8b7e012c41928f8b81107cc57, type: 3}
@@ -886,6 +888,8 @@ MonoBehaviour:
   cubeMoving: {fileID: 1239463998580277142, guid: 49057e7058384d044bd1dbd6bbf681be,
     type: 3}
   cubeExploding: {fileID: 8044200376841769464, guid: 59c837ca3a282d34999d578d52030c0f,
+    type: 3}
+  cubePowerup: {fileID: 3602696129956024716, guid: 711e855bd1970f34297d280ba38bfc09,
     type: 3}
   panel: {fileID: 1608023378}
 --- !u!1 &1895064475

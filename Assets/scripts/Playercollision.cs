@@ -4,12 +4,15 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class Playercollision : MonoBehaviour
 {
+    public Material red;
+    public Material blue;
     public Move movement;
     public Text scoreCounter;
     public GameObject Cube;
     public GameObject longCube;
     public GameObject cubeMoving;
     public GameObject cubeExploding;
+    public GameObject cubePowerup;
     public GameObject panel;
     int i; string skore;
     int lastGeneratedCubeSector = 0;
@@ -28,6 +31,15 @@ public class Playercollision : MonoBehaviour
     }
     void FixedUpdate()
     {
+        if (shield)
+        {
+            if (shieldpickupscore+10<=i/20)
+            {
+                shield = false;
+                gameObject.GetComponent<MeshRenderer>().material = red;
+            }
+        }
+
         if (movement.enabled == false)
         {
             if (firsttime)
@@ -71,6 +83,10 @@ public class Playercollision : MonoBehaviour
                         {
                             Instantiate(cubeExploding, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
                         }
+                        else if (r1.Next(0, 101) <= 50)
+                        {
+                            Instantiate(cubePowerup, new Vector3(r2.Next(-7, 8), 1, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
+                        }
                         else if (r1.Next(0, 101) <= 5)
                         {
                             Instantiate(cubeMoving, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
@@ -95,11 +111,23 @@ public class Playercollision : MonoBehaviour
         }
 
     }
+    private bool shield = false;
+    private int shieldpickupscore;
     void OnCollisionEnter(Collision collInfo)
     {
+        if (collInfo.collider.tag == "Shield")
+        {
+            shield = true;
+            gameObject.GetComponent<MeshRenderer>().material = blue;
+            shieldpickupscore = i/20;
+        }
         if (collInfo.collider.tag == "Prekazka")
         {
-            movement.enabled = false;
+            if (!shield)
+            {
+                movement.enabled = false;
+            }
+
         }
     }
     public void RestartScene()
