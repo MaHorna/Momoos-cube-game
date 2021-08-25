@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1252640973058124748}
   - component: {fileID: 1263556604460188770}
   - component: {fileID: 7101303471255786091}
-  - component: {fileID: 1240442692851480549}
+  - component: {fileID: 5285296283163223690}
   m_Layer: 0
   m_Name: CubeMoving
   m_TagString: Prekazka
@@ -121,10 +121,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1239463998580277142}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b17c584affaa94db27ad3809066179, type: 3}
+  m_Script: {fileID: 11500000, guid: 873f1698f4bc0984c997f0c60092fba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1240442692851480549
+--- !u!114 &5285296283163223690
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,6 +133,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1239463998580277142}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b99fc75ed3aede449ab3b73fe58f014a, type: 3}
+  m_Script: {fileID: 11500000, guid: fd05e2cf9fcaa1f4b961cabc7b911921, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

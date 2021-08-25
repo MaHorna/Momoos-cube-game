@@ -199,7 +199,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 466800707}
+  m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -722,7 +722,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -757,7 +757,7 @@ GameObject:
   - component: {fileID: 1808384868}
   m_Layer: 0
   m_Name: Pl
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -880,10 +880,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movement: {fileID: 1808384867}
-  nieco: {fileID: 609322372}
-  kocka: {fileID: 1554701512911550, guid: 20042ef8b7e012c41928f8b81107cc57, type: 3}
-  kvader: {fileID: 1110764813754364, guid: dc3eb7a764100fa4bb2ad70a49c96ab3, type: 3}
-  kockamoving: {fileID: 1239463998580277142, guid: 49057e7058384d044bd1dbd6bbf681be,
+  scoreCounter: {fileID: 609322372}
+  Cube: {fileID: 1554701512911550, guid: 20042ef8b7e012c41928f8b81107cc57, type: 3}
+  longCube: {fileID: 1110764813754364, guid: dc3eb7a764100fa4bb2ad70a49c96ab3, type: 3}
+  cubeMoving: {fileID: 1239463998580277142, guid: 49057e7058384d044bd1dbd6bbf681be,
+    type: 3}
+  cubeExploding: {fileID: 8044200376841769464, guid: 59c837ca3a282d34999d578d52030c0f,
     type: 3}
   panel: {fileID: 1608023378}
 --- !u!1 &1895064475

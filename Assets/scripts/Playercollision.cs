@@ -9,6 +9,7 @@ public class Playercollision : MonoBehaviour
     public GameObject Cube;
     public GameObject longCube;
     public GameObject cubeMoving;
+    public GameObject cubeExploding;
     public GameObject panel;
     int i; string skore;
     int lastGeneratedCubeSector = 0;
@@ -20,7 +21,7 @@ public class Playercollision : MonoBehaviour
     bool firsttime = true;
     void Start()
     {
-        btnRestart = panel.GetComponent<Button>();
+        btnRestart = panel.GetComponentInChildren<Button>();
         btnRestart.interactable = false;
         img = panel.GetComponent<Image>();
         btnRestartText = panel.GetComponentInChildren<Text>();
@@ -66,7 +67,11 @@ public class Playercollision : MonoBehaviour
                     int cube = r1.Next(0, 2);
                     if (cube == 1)
                     {
-                        if (r1.Next(0, 101) <= 5)
+                        if (r1.Next(0, 101) <= 1)
+                        {
+                            Instantiate(cubeExploding, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
+                        }
+                        else if (r1.Next(0, 101) <= 5)
                         {
                             Instantiate(cubeMoving, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
                         }

@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 65040274744033994}
   - component: {fileID: 23844398694481636}
   - component: {fileID: 54041027481784650}
-  - component: {fileID: 8339001777518577475}
+  - component: {fileID: 6396229285189218862}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: Cube
   m_TagString: Prekazka
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111,7 +111,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &8339001777518577475
+--- !u!114 &6396229285189218862
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -120,6 +120,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1554701512911550}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b17c584affaa94db27ad3809066179, type: 3}
+  m_Script: {fileID: 11500000, guid: 873f1698f4bc0984c997f0c60092fba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
