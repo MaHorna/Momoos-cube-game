@@ -5,10 +5,10 @@ using UnityEngine.SceneManagement;
 public class Playercollision : MonoBehaviour
 {
     public Move movement;
-    public Text nieco;
-    public GameObject kocka;
-    public GameObject kvader;
-    public GameObject kockamoving;
+    public Text scoreCounter;
+    public GameObject Cube;
+    public GameObject longCube;
+    public GameObject cubeMoving;
     public GameObject panel;
     int i; string skore;
     int lastGeneratedCubeSector = 0;
@@ -21,6 +21,7 @@ public class Playercollision : MonoBehaviour
     void Start()
     {
         btnRestart = panel.GetComponent<Button>();
+        btnRestart.interactable = false;
         img = panel.GetComponent<Image>();
         btnRestartText = panel.GetComponentInChildren<Text>();
     }
@@ -45,7 +46,7 @@ public class Playercollision : MonoBehaviour
         if ((i % 20) == 0)
         {
             skore = Convert.ToString(i / 20);
-            nieco.text = skore;
+            scoreCounter.text = skore;
         }
         if ((i % 50) == 0)
         {
@@ -67,22 +68,22 @@ public class Playercollision : MonoBehaviour
                     {
                         if (r1.Next(0, 101) <= 5)
                         {
-                            Instantiate(kockamoving, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
+                            Instantiate(cubeMoving, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
                         }
                         else
                         {
-                            Instantiate(kocka, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
+                            Instantiate(Cube, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
                         }
                     }
                     else
                     {
-                        Instantiate(kvader, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
+                        Instantiate(longCube, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
                     }
 
                 }
                 if (r1.Next(0, 101) <= LastCubeChance)
                 {
-                    Instantiate(kocka, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
+                    Instantiate(Cube, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
                 }
                 lastGeneratedCubeSector = (int)gameObject.transform.position.z + 200;
             }

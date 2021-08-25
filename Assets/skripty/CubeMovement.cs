@@ -34,6 +34,5 @@ public class CubeMovement : MonoBehaviour
             offset -= 0.1f;
             gameObject.transform.position = transform.position + new Vector3(-0.1f,0,0); 
         }
-                Debug.Log(transform.position);
     }
 }
