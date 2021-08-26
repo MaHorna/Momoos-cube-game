@@ -107,7 +107,7 @@ public class MenuHandler : MonoBehaviour
 
     public void loadEndlessMode()
     {
-        obstacles = GameObject.FindGameObjectsWithTag("Prekazka");
+        obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
         destroytime = 2 / obstacles.Length;
         endlesstransition = true;
     }

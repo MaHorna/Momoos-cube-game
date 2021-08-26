@@ -865,7 +865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1808384862}
-  forwardForce: 3000
+  forwardForce: 300
   sideForce: 30
 --- !u!114 &1808384868
 MonoBehaviour:
@@ -883,14 +883,13 @@ MonoBehaviour:
   blue: {fileID: 2100000, guid: 63944d736aad4e8409f8b722f1bd10c4, type: 2}
   movement: {fileID: 1808384867}
   scoreCounter: {fileID: 609322372}
-  Cube: {fileID: 1554701512911550, guid: 20042ef8b7e012c41928f8b81107cc57, type: 3}
-  longCube: {fileID: 1110764813754364, guid: dc3eb7a764100fa4bb2ad70a49c96ab3, type: 3}
-  cubeMoving: {fileID: 1239463998580277142, guid: 49057e7058384d044bd1dbd6bbf681be,
-    type: 3}
-  cubeExploding: {fileID: 8044200376841769464, guid: 59c837ca3a282d34999d578d52030c0f,
-    type: 3}
-  cubePowerup: {fileID: 3602696129956024716, guid: 711e855bd1970f34297d280ba38bfc09,
-    type: 3}
+  cubeObs:
+  - {fileID: 1554701512911550, guid: 20042ef8b7e012c41928f8b81107cc57, type: 3}
+  - {fileID: 1110764813754364, guid: dc3eb7a764100fa4bb2ad70a49c96ab3, type: 3}
+  - {fileID: 1239463998580277142, guid: 49057e7058384d044bd1dbd6bbf681be, type: 3}
+  - {fileID: 8044200376841769464, guid: 59c837ca3a282d34999d578d52030c0f, type: 3}
+  - {fileID: 3602696129956024716, guid: 711e855bd1970f34297d280ba38bfc09, type: 3}
+  - {fileID: 858858241894647071, guid: 1469b04df380454498f0bcf3135b4722, type: 3}
   panel: {fileID: 1608023378}
 --- !u!1 &1895064475
 GameObject:

@@ -5,29 +5,25 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 public class Playercollision : MonoBehaviour
 {
-    public Material red;
-    public Material blue;
+    public Material red, blue;
     public Move movement;
     public Text scoreCounter;
-    public GameObject Cube;
-    public GameObject longCube;
-    public GameObject cubeMoving;
-    public GameObject cubeExploding;
-    public GameObject cubePowerup;
+    public GameObject[] cubeObs; //0 cube, 1 longcube, 2 moving cube, 3 exploding cube, 4 shield pickup, 5 score pickup
     public GameObject panel;
-    int i; string skore;
-    int lastGeneratedCubeSector = 0;
     Image img;
     Button btnRestart;
     Text btnRestartText;
-    float duration = 1.5f;
-    float startTime;
     bool firsttime = true;
     bool firsttimeback = true;
     bool backToMenu = false;
-    int lasttodestroy, todestroy;
+    bool shield = false;
+    bool flying = false;
+    int lasttodestroy, todestroy, tospawn;
+    float genNewCubesAt = -4950.0f;
+    float startTime, flytime, score, shieldpickuptime;
     GameObject[] obstacles;
     GameObject[] allobjects;
+
     void Start()
     {
         btnRestart = panel.GetComponentInChildren<Button>();
@@ -37,143 +33,118 @@ public class Playercollision : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (gameObject.transform.position.y <= -5)
+
+        if (gameObject.transform.position.y <= -5) //run off of ground - end game
         {
             movement.enabled = false;
         }
-        if (shield)
+
+        if (shield) //shield off
         {
-            if (shieldpickupscore + 10 <= i / 20)
+            if (shieldpickuptime + 10.0f <= Time.time)
             {
                 shield = false;
                 gameObject.GetComponent<MeshRenderer>().material = red;
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape)) //start of back to menu procedures
         {
             backToMenu = true;
-            obstacles = GameObject.FindGameObjectsWithTag("Prekazka");
+            obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
             allobjects = GameObject.FindGameObjectsWithTag("Shield");
-            allobjects = allobjects.Concat(obstacles).ToArray();
+            allobjects = allobjects.Concat(obstacles).ToArray(); //get all objects to one array of objects to be destroy
         }
-        if (backToMenu)
+
+        if (backToMenu) //back too menu transition
         {
-            if (firsttimeback)
+            if (firsttimeback) //set default time
             {
                 firsttimeback = false;
                 startTime = Time.time;
             }
-            float t = (Time.time - startTime) / 2.0f;
-            panel.GetComponent<Image>().color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0, 0.765f, t) * 255));
-            scoreCounter.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(1,0, t) * 255));
-            lasttodestroy = todestroy;
-            todestroy = (int)Mathf.Lerp(0, allobjects.Length, t);
-            if (todestroy >= allobjects.Length)
+            float t = (Time.time - startTime) / 2.0f; //calculate time remaining
+            panel.GetComponent<Image>().color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0, 0.765f, t) * 255)); //change color of panel
+            scoreCounter.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(1, 0, t) * 255)); //change color of scorecounter
+            lasttodestroy = todestroy;//store last destroyed index
+            todestroy = (int)Mathf.Lerp(0, allobjects.Length, t); //new destroy index
+            if (todestroy >= allobjects.Length && t >= 1) //end conditions - all of them destroyed and time passed
             {
-                startTime = 0;
-                firsttimeback = true;
-                backToMenu = false;
                 loadMainMenu();
             }
             for (int i = lasttodestroy; i < todestroy; i++)
             {
                 Destroy(allobjects[i]);
             }
-
         }
-        if (movement.enabled == false)
+
+        if (movement.enabled == false) //end game
         {
-            if (firsttime)
+            if (firsttime) //seting time for transitions
             {
                 firsttime = false;
                 startTime = Time.time;
                 btnRestart.interactable = true;
             }
-            float t = (Time.time - startTime) / duration;
-            img.color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0, 0.7f, t) * 255));
-            btnRestartText.color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(0, 0.7f, t) * 255));
-            if (Input.GetKeyDown("space"))
+            float t = (Time.time - startTime) / 2.0f; //calculating time
+            img.color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0, 0.7f, t) * 255)); //panel change color
+            btnRestartText.color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(0, 0.7f, t) * 255)); //restart text color change
+            if (Input.GetKeyDown("space")) //if space pressed restarts scene ( same as clicking on button on screen)
             {
                 RestartScene();
             }
         }
-        if (movement.enabled == true)
+
+        if (movement.enabled == true) //score calculating 
         {
-            i++;
-        }
-        if ((i % 20) == 0)
-        {
-            skore = Convert.ToString(i / 20);
-            scoreCounter.text = skore;
-        }
-        if ((i % 50) == 0)
-        {
-            if (gameObject.transform.position.z - lastGeneratedCubeSector < 200)
+            if (gameObject.transform.position.y >= 1.5f && flying == false) //flying 
             {
-                int CubeToSpawn = i / 100;
-
-                int LastCubeChance = i % 100;
-                System.Random r1 = new System.Random(); //which cube to spawn
-                System.Threading.Thread.Sleep(10);
-                System.Random r2 = new System.Random(); //left/right pos
-                System.Threading.Thread.Sleep(10);
-                System.Random r3 = new System.Random(); //up/down pos
-                for (int k = 0; k < CubeToSpawn; k++)
-                {
-
-                    int cube = r1.Next(0, 2);
-                    if (cube == 1)
-                    {
-                        if (r1.Next(0, 101) <= 1)
-                        {
-                            Instantiate(cubeExploding, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
-                        }
-                        else if (r1.Next(0, 101) <= 10)
-                        {
-                            Instantiate(cubePowerup, new Vector3(r2.Next(-7, 8), 1, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
-                        }
-                        else if (r1.Next(0, 101) <= 5)
-                        {
-                            Instantiate(cubeMoving, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
-                        }
-                        else
-                        {
-                            Instantiate(Cube, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
-                        }
-                    }
-                    else
-                    {
-                        Instantiate(longCube, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
-                    }
-
-                }
-                if (r1.Next(0, 101) <= LastCubeChance)
-                {
-                    Instantiate(Cube, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
-                }
-                lastGeneratedCubeSector = (int)gameObject.transform.position.z + 200;
+                flying = true;
+                flytime = 0;
             }
+            if (flying) //flying
+            {
+                flytime += Time.deltaTime;
+                if (gameObject.transform.position.y <= 1.5f)
+                {
+                    flying = false;
+                    score += flytime * 8; //adding score for flying 
+                }
+            }
+
+            scoreCounter.text = ((int)(score + ((gameObject.transform.position.z + 4980) / 20))).ToString();
         }
 
+        if (gameObject.transform.position.z >= genNewCubesAt) //if crossed the threshold for spawning new cubes - every 50 unity units
+        {
+            spawnCubesAt(genNewCubesAt, tospawn);
+            tospawn++;
+            genNewCubesAt += 50.0f;
+        }
     }
-    private bool shield = false;
-    private int shieldpickupscore;
+
     void OnCollisionEnter(Collision collInfo)
     {
-        if (collInfo.collider.tag == "Shield")
+        if (collInfo.collider.tag == "Shield") //when coliding with shield 
         {
             shield = true;
             gameObject.GetComponent<MeshRenderer>().material = blue;
-            shieldpickupscore = i / 20;
+            shieldpickuptime = Time.time;
         }
-        if (collInfo.collider.tag == "Prekazka")
+        if (collInfo.collider.tag == "Score") //when coliding with score 
+        {
+            score += 20;
+        }
+        if (collInfo.collider.tag == "Obstacle") //when coliding with obstacle
         {
             if (!shield)
             {
                 movement.enabled = false;
             }
-
+            else
+            {
+                score += 1;
+            }
         }
     }
     public void RestartScene()
@@ -183,5 +154,47 @@ public class Playercollision : MonoBehaviour
     private void loadMainMenu()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+    void spawnCubesAt(float startOfSector, int cubesToSpawn) //cube spawning handler
+    {
+        System.Random r1 = new System.Random();
+        for (int i = 0; i < cubesToSpawn; i++)
+        {
+            int random = r1.Next(0, 101); //percentage
+            int selectedcube = 0;
+            if (random <= 54) //basic cube
+            {
+                selectedcube = 0;
+            }
+            else if (random <= 71) //long
+            {
+                selectedcube = 1;
+            }
+            else if (random <= 81) //moving
+            {
+                selectedcube = 2;
+            }
+            else if (random <= 85) // exploding
+            {
+                selectedcube = 3;
+            }
+            else if (random <= 95) //shield
+            {
+                selectedcube = 4;
+            }
+            else //score
+            {
+                selectedcube = 5;
+            }
+            if (selectedcube == 4 || selectedcube == 5)
+            {
+                Instantiate(cubeObs[selectedcube], new Vector3(r1.Next(-7, 8), 0.75f, r1.Next((int)startOfSector + 200, (int)startOfSector + 251)), Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(cubeObs[selectedcube], new Vector3(r1.Next(-7, 8), 2, r1.Next((int)startOfSector + 200, (int)startOfSector + 251)), Quaternion.identity);
+            }
+
+        }
     }
 }
