@@ -19,6 +19,10 @@ public class SelfDestruct : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+        if (gameObject.transform.position.y<=-5)
+        {
+            Destroy(gameObject);
+        }
 
     }
 }

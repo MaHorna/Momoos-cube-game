@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 public class Playercollision : MonoBehaviour
 {
     public Material red;
@@ -22,6 +23,11 @@ public class Playercollision : MonoBehaviour
     float duration = 1.5f;
     float startTime;
     bool firsttime = true;
+    bool firsttimeback = true;
+    bool backToMenu = false;
+    int lasttodestroy, todestroy;
+    GameObject[] obstacles;
+    GameObject[] allobjects;
     void Start()
     {
         btnRestart = panel.GetComponentInChildren<Button>();
@@ -31,19 +37,51 @@ public class Playercollision : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (gameObject.transform.position.y <=-5)
+        if (gameObject.transform.position.y <= -5)
         {
-            movement.enabled=false;
+            movement.enabled = false;
         }
         if (shield)
         {
-            if (shieldpickupscore+10<=i/20)
+            if (shieldpickupscore + 10 <= i / 20)
             {
                 shield = false;
                 gameObject.GetComponent<MeshRenderer>().material = red;
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            backToMenu = true;
+            obstacles = GameObject.FindGameObjectsWithTag("Prekazka");
+            allobjects = GameObject.FindGameObjectsWithTag("Shield");
+            allobjects = allobjects.Concat(obstacles).ToArray();
+        }
+        if (backToMenu)
+        {
+            if (firsttimeback)
+            {
+                firsttimeback = false;
+                startTime = Time.time;
+            }
+            float t = (Time.time - startTime) / 2.0f;
+            panel.GetComponent<Image>().color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0, 0.765f, t) * 255));
+            scoreCounter.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(1,0, t) * 255));
+            lasttodestroy = todestroy;
+            todestroy = (int)Mathf.Lerp(0, allobjects.Length, t);
+            if (todestroy >= allobjects.Length)
+            {
+                startTime = 0;
+                firsttimeback = true;
+                backToMenu = false;
+                loadMainMenu();
+            }
+            for (int i = lasttodestroy; i < todestroy; i++)
+            {
+                Destroy(allobjects[i]);
+            }
+
+        }
         if (movement.enabled == false)
         {
             if (firsttime)
@@ -127,7 +165,7 @@ public class Playercollision : MonoBehaviour
         {
             shield = true;
             gameObject.GetComponent<MeshRenderer>().material = blue;
-            shieldpickupscore = i/20;
+            shieldpickupscore = i / 20;
         }
         if (collInfo.collider.tag == "Prekazka")
         {
@@ -141,5 +179,9 @@ public class Playercollision : MonoBehaviour
     public void RestartScene()
     {
         SceneManager.LoadScene("Endless");
+    }
+    private void loadMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }
