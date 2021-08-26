@@ -8,6 +8,7 @@ public class Playercollision : MonoBehaviour
     public Material red, blue;
     public Move movement;
     public Text scoreCounter;
+    public Text highscoreShow;
     public GameObject[] cubeObs; //0 cube, 1 longcube, 2 moving cube, 3 exploding cube, 4 shield pickup, 5 score pickup
     public GameObject panel;
     Image img;
@@ -30,6 +31,7 @@ public class Playercollision : MonoBehaviour
         btnRestart.interactable = false;
         img = panel.GetComponent<Image>();
         btnRestartText = panel.GetComponentInChildren<Text>();
+        highscoreShow.text = "Highscore: " + DataHolder.Instance.Highscore.ToString();
     }
     void FixedUpdate()
     {
@@ -149,6 +151,10 @@ public class Playercollision : MonoBehaviour
     }
     public void RestartScene()
     {
+        if (DataHolder.Instance.Highscore <= (score+((gameObject.transform.position.z + 4980) / 20)))
+        {
+            DataHolder.Instance.Highscore = (int)(score + ((gameObject.transform.position.z + 4980) / 20));
+        }
         SceneManager.LoadScene("Endless");
     }
     private void loadMainMenu()

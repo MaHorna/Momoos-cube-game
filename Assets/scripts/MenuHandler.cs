@@ -5,11 +5,13 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class MenuHandler : MonoBehaviour
 {
+    public Text highscoreshow;
     float mainmanugroupPosx;
     float mainmenugroupPosY;
     void Start()
     {
         mainmanugroupPosx = MainmenuGroup.transform.position.x;
+        highscoreshow.text = "Highscore: " + DataHolder.Instance.Highscore.ToString();
     }
     public GameObject MainmenuGroup;
     public GameObject panel;
@@ -83,7 +85,7 @@ public class MenuHandler : MonoBehaviour
             }
             float t = (Time.time - startTime) / 2.0f;
             MainmenuGroup.transform.position = new Vector3(MainmenuGroup.transform.position.x, Mathf.SmoothStep(mainmenugroupPosY, mainmenugroupPosY + Screen.height, t), MainmenuGroup.transform.position.z);
-            if (t>=1)
+            if (t >= 1)
             {
                 creditstransition = false;
             }
@@ -97,7 +99,7 @@ public class MenuHandler : MonoBehaviour
             }
             float t = (Time.time - startTime) / 2.0f;
             MainmenuGroup.transform.position = new Vector3(MainmenuGroup.transform.position.x, Mathf.SmoothStep(mainmenugroupPosY + Screen.height, mainmenugroupPosY, t), MainmenuGroup.transform.position.z);
-            if (t>=1)
+            if (t >= 1)
             {
                 creditstransitionBack = false;
             }
@@ -121,7 +123,7 @@ public class MenuHandler : MonoBehaviour
     }
     public void credits()
     {
-        firsttimecre =true;
+        firsttimecre = true;
         creditstransition = true;
         creditstransitionBack = false;
     }
