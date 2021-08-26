@@ -9,12 +9,16 @@ public class SelfDestruct : MonoBehaviour
     {
         player = GameObject.Find("Pl");
     }
-    
+
     void FixedUpdate()
     {
-        if (player.transform.position.z>gameObject.transform.position.z+10)
+        if (player != null)
         {
-            Destroy(gameObject);
+            if (player.transform.position.z > gameObject.transform.position.z + 10)
+            {
+                Destroy(gameObject);
+            }
         }
+
     }
 }

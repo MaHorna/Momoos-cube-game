@@ -31,6 +31,10 @@ public class Playercollision : MonoBehaviour
     }
     void FixedUpdate()
     {
+        if (gameObject.transform.position.y <=-5)
+        {
+            movement.enabled=false;
+        }
         if (shield)
         {
             if (shieldpickupscore+10<=i/20)
@@ -51,6 +55,10 @@ public class Playercollision : MonoBehaviour
             float t = (Time.time - startTime) / duration;
             img.color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0, 0.7f, t) * 255));
             btnRestartText.color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(0, 0.7f, t) * 255));
+            if (Input.GetKeyDown("space"))
+            {
+                RestartScene();
+            }
         }
         if (movement.enabled == true)
         {
@@ -83,7 +91,7 @@ public class Playercollision : MonoBehaviour
                         {
                             Instantiate(cubeExploding, new Vector3(r2.Next(-7, 8), 2, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
                         }
-                        else if (r1.Next(0, 101) <= 50)
+                        else if (r1.Next(0, 101) <= 10)
                         {
                             Instantiate(cubePowerup, new Vector3(r2.Next(-7, 8), 1, r3.Next(lastGeneratedCubeSector, lastGeneratedCubeSector + 51)), Quaternion.identity);
                         }

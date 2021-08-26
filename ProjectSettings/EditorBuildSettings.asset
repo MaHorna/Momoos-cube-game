@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Endless.unity
     guid: 970e6fdfe8c5c8d4989f6b438a6d7f70
+  - enabled: 1
+    path: Assets/MainMenu.unity
+    guid: 7475cfb00d9941249a346e13b19a45b6
   m_configObjects: {}

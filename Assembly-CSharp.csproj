@@ -58,9 +58,12 @@
      <Compile Include="Assets\scripts\CubeMovement.cs" />
      <Compile Include="Assets\scripts\Explosion.cs" />
      <Compile Include="Assets\scripts\FollowPl.cs" />
+     <Compile Include="Assets\scripts\MenuHandler.cs" />
      <Compile Include="Assets\scripts\Move.cs" />
      <Compile Include="Assets\scripts\Playercollision.cs" />
      <Compile Include="Assets\scripts\SelfDestruct.cs" />
+     <Compile Include="Assets\scripts\StartUpEndless.cs" />
+     <Compile Include="Assets\scripts\StartupMenu.cs" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.13f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>

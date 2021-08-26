@@ -17,18 +17,21 @@ public class Explosion : MonoBehaviour
     bool firsttime = true;
     void FixedUpdate()
     {
-        if (player.transform.position.z + 50 >= gameObject.transform.position.z)
+        if (player != null)
         {
-            if (firsttime)
+            if (player.transform.position.z + 50 >= gameObject.transform.position.z)
             {
-                firsttime = false;
-                Collider[] objects = UnityEngine.Physics.OverlapSphere(gameObject.transform.position, radius);
-                foreach (Collider h in objects)
+                if (firsttime)
                 {
-                    Rigidbody r = h.GetComponent<Rigidbody>();
-                    if (r != null)
+                    firsttime = false;
+                    Collider[] objects = UnityEngine.Physics.OverlapSphere(gameObject.transform.position, radius);
+                    foreach (Collider h in objects)
                     {
-                        r.AddExplosionForce(power,  gameObject.transform.position, radius);
+                        Rigidbody r = h.GetComponent<Rigidbody>();
+                        if (r != null)
+                        {
+                            r.AddExplosionForce(power, gameObject.transform.position, radius);
+                        }
                     }
                 }
             }
