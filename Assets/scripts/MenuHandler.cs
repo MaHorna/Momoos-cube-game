@@ -11,6 +11,11 @@ public class MenuHandler : MonoBehaviour
     void Start()
     {
         mainmanugroupPosx = MainmenuGroup.transform.position.x;
+        if (PlayerPrefs.HasKey("HighScore"))
+        {
+            DataHolder.Instance.Highscore = PlayerPrefs.GetInt("HighScore");
+        }
+        
         highscoreshow.text = "Highscore: " + DataHolder.Instance.Highscore.ToString();
     }
     public GameObject MainmenuGroup;
