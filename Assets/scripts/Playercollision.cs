@@ -9,8 +9,10 @@ public class Playercollision : MonoBehaviour
     public Move movement;
     public Text scoreCounter;
     public Text highscoreShow;
-    public GameObject[] cubeObs; //0 cube, 1 longcube, 2 moving cube, 3 exploding cube, 4 shield pickup, 5 score pickup
+    public Text shieldtimer;
+    public GameObject[] cubeObs; //0 cube, 1 longcube, 2 moving cube, 3 exploding cube, 4 shield pickup, 5 score pickup, 6 waycleanerpickup
     public GameObject panel;
+    public GameObject scoreEffect;
     Image img;
     Button btnRestart;
     Text btnRestartText;
@@ -20,8 +22,9 @@ public class Playercollision : MonoBehaviour
     bool shield = false;
     bool flying = false;
     int lasttodestroy, todestroy, tospawn, cubesHitWithShield;
+    int scoreEffectIndex = 1;
     float genNewCubesAt = -5100.0f;
-    float startTime, flytime, score, shieldpickuptime;
+    float startTime, flytime, score, shieldpickuptime, scoreeffecttime;
     GameObject[] obstacles;
     GameObject[] allobjects;
 
@@ -35,18 +38,21 @@ public class Playercollision : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (gameObject.transform.position.y <= -5) //run off of ground - end game
+        if (gameObject.transform.position.y <= -3) //run off of ground - end game
         {
             movement.enabled = false;
         }
 
         if (shield) //shield off
         {
+            shieldtimer.text = (5.0f-(Time.time - shieldpickuptime)).ToString("0.00");
             if (shieldpickuptime + 5.0f <= Time.time)
             {
+                shieldtimer.gameObject.SetActive(false);
                 shield = false;
-                score += cubesHitWithShield; //todo send to function handling showing score updates
+                score += cubesHitWithShield;
                 gameObject.GetComponent<MeshRenderer>().material = red;
+                ScoreEffectUpdate(cubesHitWithShield);
                 //todo add to dataholder achievment counter how many cubes hit
             }
         }
@@ -72,15 +78,13 @@ public class Playercollision : MonoBehaviour
                     {
                         PlayerPrefs.SetInt("HighScore", (int)(score + ((gameObject.transform.position.z + 4980) / 20)));
                         PlayerPrefs.Save();
+                        Debug.Log("saved");
                     }
-                    Debug.Log(PlayerPrefs.GetInt("HighScore"));
                 }
                 firsttimeback = false;
                 startTime = Time.time;
             }
-            float t1 = (Time.time - startTime) / ((1-(panel.GetComponent<Image>().color.a / 0.765f)) * 2.0f); 
             float t2 = (Time.time - startTime) / 2.0f;//calculate time remaining
-            Debug.Log(panel.GetComponent<Image>().color.a);
             panel.GetComponent<Image>().color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(panel.GetComponent<Image>().color.a, 0.765f, t2) * 255)); //change color of panel
             scoreCounter.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(1, 0, t2) * 255)); //change color of scorecounter
             highscoreShow.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(1, 0, t2) * 255)); //change color of highscore show
@@ -108,6 +112,7 @@ public class Playercollision : MonoBehaviour
                     {
                         PlayerPrefs.SetInt("HighScore", (int)(score + ((gameObject.transform.position.z + 4980) / 20)));
                         PlayerPrefs.Save();
+                        Debug.Log("saved restart");
                     }
                     firsttime = false;
                     startTime = Time.time;
@@ -125,7 +130,7 @@ public class Playercollision : MonoBehaviour
 
         if (movement.enabled == true) //score calculating 
         {
-            if (gameObject.transform.position.y >= 1.5f && flying == false) //flying 
+            if (gameObject.transform.position.y >= 2.1f && flying == false) //flying 
             {
                 flying = true;
                 flytime = 0;
@@ -133,9 +138,10 @@ public class Playercollision : MonoBehaviour
             if (flying) //flying
             {
                 flytime += Time.deltaTime;
-                if (gameObject.transform.position.y <= 1.5f)
+                if (gameObject.transform.position.y <= 2.1f)
                 {
                     flying = false;
+                    ScoreEffectUpdate((int)(flytime * 6));
                     score += flytime * 6; //adding score for flying 
                 }
             }
@@ -155,12 +161,14 @@ public class Playercollision : MonoBehaviour
     {
         if (collInfo.collider.tag == "Shield") //when coliding with shield 
         {
+            shieldtimer.gameObject.SetActive(true);
             shield = true;
             gameObject.GetComponent<MeshRenderer>().material = blue;
             shieldpickuptime = Time.time;
         }
         if (collInfo.collider.tag == "Score") //when coliding with score 
         {
+            ScoreEffectUpdate(20);
             score += 20;
         }
         if (collInfo.collider.tag == "Obstacle") //when coliding with obstacle
@@ -184,6 +192,7 @@ public class Playercollision : MonoBehaviour
             {
                 PlayerPrefs.SetInt("HighScore", (int)(score + ((gameObject.transform.position.z + 4980) / 20)));
                 PlayerPrefs.Save();
+                Debug.Log("Saved restart scene");
             }
             Debug.Log(PlayerPrefs.GetInt("HighScore"));
         }
@@ -238,5 +247,11 @@ public class Playercollision : MonoBehaviour
             }
 
         }
+    }
+    void ScoreEffectUpdate(int scoretoshow) {
+        System.Random r1 = new System.Random();
+        GameObject insObj = Instantiate(scoreEffect, new Vector3(1060,r1.Next(850,1000),0),Quaternion.identity);
+        insObj.transform.SetParent(GameObject.Find("Canvas").transform);
+        insObj.GetComponent<ScoreEffectBehaviour>().ScoreEffectString = scoretoshow.ToString();
     }
 }

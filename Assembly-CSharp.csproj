@@ -43,6 +43,7 @@
      <Compile Include="Assets\scripts\MenuHandler.cs" />
      <Compile Include="Assets\scripts\Move.cs" />
      <Compile Include="Assets\scripts\Playercollision.cs" />
+     <Compile Include="Assets\scripts\ScoreEffectBehaviour.cs" />
      <Compile Include="Assets\scripts\SelfDestruct.cs" />
      <Compile Include="Assets\scripts\StartUpEndless.cs" />
      <Compile Include="Assets\scripts\StartupMenu.cs" />
