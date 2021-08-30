@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class StartupMenu : MonoBehaviour
 {
-    
+
     void Start()
     {
         QualitySettings.vSyncCount = 1;
-        if (!PlayerPrefs.HasKey("HighScore"))
+    }
+    void FixedUpdate()
+    {
+        if (DataHolder.Instance.optionsLoaded)
         {
-            PlayerPrefs.SetInt("HighScore", 0);
+            QualitySettings.vSyncCount = DataHolder.Instance.fps;
         }
     }
     

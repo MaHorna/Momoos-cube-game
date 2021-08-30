@@ -6,6 +6,7 @@ using System.Linq;
 public class Playercollision : MonoBehaviour
 {
     public Material red, blue;
+    public Material[] AchievementMat; //0 red, 1 golden,2 light blue ,3 black and red,4 golden with crowns,5 blue with small cubes,6 green,7
     public Move movement;
     public Text scoreCounter;
     public Text highscoreShow;
@@ -21,10 +22,9 @@ public class Playercollision : MonoBehaviour
     bool backToMenu = false;
     bool shield = false;
     bool flying = false;
-    int lasttodestroy, todestroy, tospawn, cubesHitWithShield;
-    int scoreEffectIndex = 1;
+    int lasttodestroy, todestroy, tospawn, cubesHitWithShield, smallcubeshitwithShield;
     float genNewCubesAt = -5100.0f;
-    float startTime, flytime, score, shieldpickuptime, scoreeffecttime;
+    float startTime, flytime, score, shieldpickuptime;
     GameObject[] obstacles;
     GameObject[] allobjects;
 
@@ -35,9 +35,11 @@ public class Playercollision : MonoBehaviour
         img = panel.GetComponent<Image>();
         btnRestartText = panel.GetComponentInChildren<Text>();
         highscoreShow.text = "Highscore: " + DataHolder.Instance.Highscore.ToString();
+        gameObject.GetComponent<MeshRenderer>().material = AchievementMat[DataHolder.Instance.CubeIndex];
     }
     void FixedUpdate()
     {
+
         if (gameObject.transform.position.y <= -3) //run off of ground - end game
         {
             movement.enabled = false;
@@ -45,15 +47,30 @@ public class Playercollision : MonoBehaviour
 
         if (shield) //shield off
         {
-            shieldtimer.text = (5.0f-(Time.time - shieldpickuptime)).ToString("0.00");
+            shieldtimer.text = (5.0f - (Time.time - shieldpickuptime)).ToString("0.00");
             if (shieldpickuptime + 5.0f <= Time.time)
             {
                 shieldtimer.gameObject.SetActive(false);
                 shield = false;
-                score += cubesHitWithShield;
-                gameObject.GetComponent<MeshRenderer>().material = red;
-                ScoreEffectUpdate(cubesHitWithShield);
-                //todo add to dataholder achievment counter how many cubes hit
+                gameObject.GetComponent<MeshRenderer>().material = AchievementMat[DataHolder.Instance.CubeIndex];
+                if (DataHolder.Instance.CubeIndex == 2)
+                {
+                    score += (cubesHitWithShield * 3);
+                    ScoreEffectUpdate(cubesHitWithShield * 3);
+                }
+                else
+                {
+                    score += cubesHitWithShield;
+                    ScoreEffectUpdate(cubesHitWithShield);
+                }
+                if (smallcubeshitwithShield >= DataHolder.Instance.AchievementCountables[5])
+                {
+                    DataHolder.Instance.AchievementCountables[5] = smallcubeshitwithShield;
+                }
+                cubesHitWithShield = 0;
+                smallcubeshitwithShield = 0;
+                DataHolder.Instance.AchievementCountables[2]++;
+
             }
         }
 
@@ -68,23 +85,17 @@ public class Playercollision : MonoBehaviour
 
         if (backToMenu) //back to menu transition
         {
-
             if (firsttimeback) //set default time and set highscore if high enough
             {
-                if (DataHolder.Instance.Highscore <= (score + ((gameObject.transform.position.z + 4980) / 20)))
+                if (movement.enabled == true)
                 {
-                    DataHolder.Instance.Highscore = (int)(score + ((gameObject.transform.position.z + 4980) / 20));
-                    if (PlayerPrefs.HasKey("HighScore"))
-                    {
-                        PlayerPrefs.SetInt("HighScore", (int)(score + ((gameObject.transform.position.z + 4980) / 20)));
-                        PlayerPrefs.Save();
-                        Debug.Log("saved");
-                    }
+                    DataHolder.Instance.AchievementCountables[4]++;
+                    DataHolder.Instance.UpdateHS((int)(score + ((gameObject.transform.position.z + 4980) / 20)));
                 }
                 firsttimeback = false;
                 startTime = Time.time;
             }
-            float t2 = (Time.time - startTime) / 2.0f;//calculate time remaining
+            float t2 = (Time.time - startTime) / DataHolder.Instance.TransitionLength;//calculate time remaining
             panel.GetComponent<Image>().color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(panel.GetComponent<Image>().color.a, 0.765f, t2) * 255)); //change color of panel
             scoreCounter.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(1, 0, t2) * 255)); //change color of scorecounter
             highscoreShow.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(1, 0, t2) * 255)); //change color of highscore show
@@ -94,36 +105,34 @@ public class Playercollision : MonoBehaviour
             btnRestart.interactable = false;
             if (todestroy >= allobjects.Length && t2 >= 1) //end conditions - all of them destroyed and time passed
             {
-                loadMainMenu();
+                DataHolder.Instance.SaveData();
+                SceneManager.LoadScene("MainMenu");
             }
             for (int i = lasttodestroy; i < todestroy; i++)
             {
                 Destroy(allobjects[i]);
             }
         }
-
+        Debug.Log("selected transitio length: " + DataHolder.Instance.TransitionLength);
         if (movement.enabled == false) //end game
         {
             if (!backToMenu)
             {
                 if (firsttime) //seting time for transitions, and saving score
                 {
-                    if (PlayerPrefs.HasKey("HighScore"))
-                    {
-                        PlayerPrefs.SetInt("HighScore", (int)(score + ((gameObject.transform.position.z + 4980) / 20)));
-                        PlayerPrefs.Save();
-                        Debug.Log("saved restart");
-                    }
+                    DataHolder.Instance.AchievementCountables[4]++;
+                    DataHolder.Instance.UpdateHS((int)(score + ((gameObject.transform.position.z + 4980) / 20)));
                     firsttime = false;
                     startTime = Time.time;
                     btnRestart.interactable = true;
                 }
-                float t = (Time.time - startTime) / 2.0f; //calculating time
+                float t = (Time.time - startTime) / DataHolder.Instance.TransitionLength; //calculating time
                 img.color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0, 0.765f, t) * 255)); //panel change color
                 btnRestartText.color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(0, 1, t) * 255)); //restart text color change
                 if (Input.GetKeyDown("space")) //if space pressed restarts scene ( same as clicking on button on screen)
                 {
-                    RestartScene();
+                    DataHolder.Instance.SaveData();
+                    SceneManager.LoadScene("Endless");
                 }
             }
         }
@@ -141,8 +150,21 @@ public class Playercollision : MonoBehaviour
                 if (gameObject.transform.position.y <= 2.1f)
                 {
                     flying = false;
-                    ScoreEffectUpdate((int)(flytime * 6));
-                    score += flytime * 6; //adding score for flying 
+                    if (DataHolder.Instance.CubeIndex == 6)
+                    {
+                        ScoreEffectUpdate((int)(flytime * 18));
+                        score += flytime * 18; //adding score for flying 
+                    }
+                    else
+                    {
+                        ScoreEffectUpdate((int)(flytime * 6));
+                        score += flytime * 6; //adding score for flying 
+                    }
+
+                    if (DataHolder.Instance.AchievementCountables[6] < flytime)
+                    {
+                        DataHolder.Instance.AchievementCountables[6] = (int)flytime;
+                    }
                 }
             }
 
@@ -164,43 +186,50 @@ public class Playercollision : MonoBehaviour
             shieldtimer.gameObject.SetActive(true);
             shield = true;
             gameObject.GetComponent<MeshRenderer>().material = blue;
+            DataHolder.Instance.AchievementCountables[2]++;
             shieldpickuptime = Time.time;
         }
         if (collInfo.collider.tag == "Score") //when coliding with score 
         {
-            ScoreEffectUpdate(20);
-            score += 20;
+            DataHolder.Instance.AchievementCountables[1]++;
+            if (DataHolder.Instance.CubeIndex == 1)
+            {
+                ScoreEffectUpdate(40);
+                score += 40;
+            }
+            else
+            {
+                ScoreEffectUpdate(20);
+                score += 20;
+            }
+
         }
         if (collInfo.collider.tag == "Obstacle") //when coliding with obstacle
         {
             if (!shield)
             {
-                movement.enabled = false;
+                if (DataHolder.Instance.CubeIndex != 3)
+                {
+                    movement.enabled = false;
+                }
+                if (collInfo.gameObject.GetComponent<SelfDestruct>().cubeType == 1 && DataHolder.Instance.CubeIndex == 4)
+                {
+                    //number of runs achievemenmt  , not dies to moving cube -  type 1 cube
+                }
+                if (collInfo.gameObject.GetComponent<SelfDestruct>().cubeType == 2 && DataHolder.Instance.CubeIndex == 5)
+                {
+                    //small cube shit in one shield achievemenmt  , not dies to small cube -  type 2 cube
+                }
             }
             else
             {
                 cubesHitWithShield++;
+                if (collInfo.gameObject.GetComponent<SelfDestruct>().cubeType == 2)
+                {
+                    smallcubeshitwithShield++;
+                }
             }
         }
-    }
-    public void RestartScene()
-    {
-        if (DataHolder.Instance.Highscore <= (score + ((gameObject.transform.position.z + 4980) / 20)))
-        {
-            DataHolder.Instance.Highscore = (int)(score + ((gameObject.transform.position.z + 4980) / 20));
-            if (PlayerPrefs.HasKey("HighScore"))
-            {
-                PlayerPrefs.SetInt("HighScore", (int)(score + ((gameObject.transform.position.z + 4980) / 20)));
-                PlayerPrefs.Save();
-                Debug.Log("Saved restart scene");
-            }
-            Debug.Log(PlayerPrefs.GetInt("HighScore"));
-        }
-        SceneManager.LoadScene("Endless");
-    }
-    private void loadMainMenu()
-    {
-        SceneManager.LoadScene("MainMenu");
     }
     void spawnCubesAt(float startOfSector, int cubesToSpawn) //cube spawning handler
     {
@@ -248,10 +277,15 @@ public class Playercollision : MonoBehaviour
 
         }
     }
-    void ScoreEffectUpdate(int scoretoshow) {
+    void ScoreEffectUpdate(int scoretoshow)
+    {
         System.Random r1 = new System.Random();
-        GameObject insObj = Instantiate(scoreEffect, new Vector3(1060,r1.Next(850,1000),0),Quaternion.identity);
+        GameObject insObj = Instantiate(scoreEffect, new Vector3(1060, r1.Next(850, 1000), 0), Quaternion.identity);
         insObj.transform.SetParent(GameObject.Find("Canvas").transform);
         insObj.GetComponent<ScoreEffectBehaviour>().ScoreEffectString = scoretoshow.ToString();
+    }
+    void PlayerCubeInit()
+    {
+
     }
 }

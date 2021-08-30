@@ -8,5 +8,11 @@ public class StartUpEndless : MonoBehaviour
     {
         QualitySettings.vSyncCount = 1;
     }
-    //maybe add first few cubes
+    void FixedUpdate()
+    {
+        if (DataHolder.Instance.optionsLoaded)
+        {
+            QualitySettings.vSyncCount = DataHolder.Instance.fps;
+        }
+    }
 }

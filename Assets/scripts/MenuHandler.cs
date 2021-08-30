@@ -17,14 +17,14 @@ public class MenuHandler : MonoBehaviour
     int transitionIndex; //transition index , 0 none, 1 up - leaderboard, 2 right -  endless, 3 down - credits, 4 left - options
     void Start()
     {
-        if (PlayerPrefs.HasKey("HighScore"))
-        {
-            DataHolder.Instance.Highscore = PlayerPrefs.GetInt("HighScore");
-        }
-        highscoreshow.text = "Highscore: " + DataHolder.Instance.Highscore.ToString();
+        
     }
     void FixedUpdate()
     {
+        if (DataHolder.Instance.HSloaded ==true)
+        {
+            highscoreshow.text = "Highscore: " + DataHolder.Instance.Highscore.ToString();
+        }
         if (transitionIndex == 0) //spawn new cubes only
         {
             time1 += Time.deltaTime;
@@ -48,7 +48,7 @@ public class MenuHandler : MonoBehaviour
         }
         else if (transitionIndex == 1) //up
         {
-            float t = (Time.time - startTime) / 2.0f;
+            float t = (Time.time - startTime) / DataHolder.Instance.TransitionLength;
             MainmenuGroup.transform.position = new Vector3(MainmenuGroup.transform.position.x, Mathf.SmoothStep(mainmenugroupPosY, mainmenugroupPosY-Screen.height, t), MainmenuGroup.transform.position.z);
             if (t >= 1)
             {
@@ -57,7 +57,7 @@ public class MenuHandler : MonoBehaviour
         }
         else if (transitionIndex == 2) //right
         {
-            float t = (Time.time - startTime) / 2.0f;
+            float t = (Time.time - startTime) / DataHolder.Instance.TransitionLength;
             MainmenuGroup.transform.position = new Vector3(Mathf.SmoothStep(mainmenugroupPosx, mainmenugroupPosx - Screen.width, t), MainmenuGroup.transform.position.y, MainmenuGroup.transform.position.z);
             if (t >= 1)
             {
@@ -66,7 +66,7 @@ public class MenuHandler : MonoBehaviour
         }
         else if (transitionIndex == 3)//down
         {
-            float t = (Time.time - startTime) / 2.0f;
+            float t = (Time.time - startTime) / DataHolder.Instance.TransitionLength;
             MainmenuGroup.transform.position = new Vector3(MainmenuGroup.transform.position.x, Mathf.SmoothStep(mainmenugroupPosY, mainmenugroupPosY + Screen.height, t), MainmenuGroup.transform.position.z);
             if (t >= 1)
             {
@@ -75,7 +75,8 @@ public class MenuHandler : MonoBehaviour
         }
         else if (transitionIndex == 4)//left
         {
-            float t = (Time.time - startTime) / 2.0f;
+            DataHolder.Instance.Options();
+            float t = (Time.time - startTime) / DataHolder.Instance.TransitionLength;
             MainmenuGroup.transform.position = new Vector3(Mathf.SmoothStep(mainmenugroupPosx, mainmenugroupPosx + Screen.width, t), MainmenuGroup.transform.position.y, MainmenuGroup.transform.position.z);
             if (t >= 1)
             {
@@ -84,7 +85,7 @@ public class MenuHandler : MonoBehaviour
         }
         else if (transitionIndex == 5) //right to endless
         {
-            float t = (Time.time - startTime) / 2.0f;
+            float t = (Time.time - startTime) / DataHolder.Instance.TransitionLength;
             panel.GetComponent<Image>().color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0.7f, 0, t) * 255));
             MainmenuGroup.transform.position = new Vector3(Mathf.SmoothStep(mainmenugroupPosx, mainmenugroupPosx - Screen.width, t), MainmenuGroup.transform.position.y, MainmenuGroup.transform.position.z);
             lasttodestroy = todestroy;
@@ -127,6 +128,7 @@ public class MenuHandler : MonoBehaviour
     {
         if (transitionIndex == 0)
         {
+            DataHolder.Instance.SaveOptions();
             mainmenugroupPosx = MainmenuGroup.transform.position.x;
             transitionIndex = 2;
             startTime = Time.time;

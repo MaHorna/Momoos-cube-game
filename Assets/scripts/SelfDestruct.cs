@@ -5,6 +5,7 @@ using UnityEngine;
 public class SelfDestruct : MonoBehaviour
 {
     private GameObject player;
+    public int cubeType;
     void Start()
     {
         player = GameObject.Find("Pl");

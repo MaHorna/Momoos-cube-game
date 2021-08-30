@@ -1039,6 +1039,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   red: {fileID: 2100000, guid: 730a8ee97b4726844acd698af2490dbf, type: 2}
   blue: {fileID: 2100000, guid: 63944d736aad4e8409f8b722f1bd10c4, type: 2}
+  AchievementMat:
+  - {fileID: 2100000, guid: 730a8ee97b4726844acd698af2490dbf, type: 2}
+  - {fileID: 2100000, guid: 2b660711a5238564896d44e34d3bfbb2, type: 2}
+  - {fileID: 2100000, guid: 63944d736aad4e8409f8b722f1bd10c4, type: 2}
+  - {fileID: 2100000, guid: e6736194a97a124429b96818c4f43832, type: 2}
+  - {fileID: 2100000, guid: 2b660711a5238564896d44e34d3bfbb2, type: 2}
+  - {fileID: 2100000, guid: 63944d736aad4e8409f8b722f1bd10c4, type: 2}
+  - {fileID: 2100000, guid: 6773558e3be75684bbd2b52899fa019a, type: 2}
   movement: {fileID: 1808384867}
   scoreCounter: {fileID: 609322372}
   highscoreShow: {fileID: 1325519386}
