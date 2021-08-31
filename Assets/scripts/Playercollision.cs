@@ -14,9 +14,7 @@ public class Playercollision : MonoBehaviour
     public GameObject[] cubeObs; //0 cube, 1 longcube, 2 moving cube, 3 exploding cube, 4 shield pickup, 5 score pickup, 6 waycleanerpickup
     public GameObject panel;
     public GameObject scoreEffect;
-    Image img;
-    Button btnRestart;
-    Text btnRestartText;
+    public GameObject ResBtn;
     bool firsttime = true;
     bool firsttimeback = true;
     bool backToMenu = false;
@@ -25,15 +23,13 @@ public class Playercollision : MonoBehaviour
     int lasttodestroy, todestroy, tospawn, cubesHitWithShield, smallcubeshitwithShield;
     float genNewCubesAt = -5100.0f;
     float startTime, flytime, score, shieldpickuptime;
+    bool Restartbutton = false;
     GameObject[] obstacles;
     GameObject[] allobjects;
 
     void Start()
     {
-        btnRestart = panel.GetComponentInChildren<Button>();
-        btnRestart.interactable = false;
-        img = panel.GetComponent<Image>();
-        btnRestartText = panel.GetComponentInChildren<Text>();
+        ResBtn.GetComponent<Button>().interactable = false;
         highscoreShow.text = "Highscore: " + DataHolder.Instance.Highscore.ToString();
         gameObject.GetComponent<MeshRenderer>().material = AchievementMat[DataHolder.Instance.CubeIndex];
     }
@@ -80,7 +76,7 @@ public class Playercollision : MonoBehaviour
             obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
             allobjects = GameObject.FindGameObjectsWithTag("Shield");
             allobjects = allobjects.Concat(obstacles).ToArray(); //get all objects to one array of objects to be destroy
-            btnRestart.interactable = false;
+            ResBtn.GetComponent<Button>().interactable = false;
         }
 
         if (backToMenu) //back to menu transition
@@ -96,13 +92,13 @@ public class Playercollision : MonoBehaviour
                 startTime = Time.time;
             }
             float t2 = (Time.time - startTime) / DataHolder.Instance.TransitionLength;//calculate time remaining
-            panel.GetComponent<Image>().color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(panel.GetComponent<Image>().color.a, 0.765f, t2) * 255)); //change color of panel
-            scoreCounter.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(1, 0, t2) * 255)); //change color of scorecounter
-            highscoreShow.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(1, 0, t2) * 255)); //change color of highscore show
-            btnRestartText.color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(btnRestartText.color.a, 0, t2) * 255)); //restart text color change
+            GameObject.Find("MenuTrans").GetComponent<CanvasGroup>().alpha = Mathf.SmoothStep(0, 1, t2);
+            panel.GetComponent<Image>().color = new Color32(255, 255, 255, (byte)Mathf.SmoothStep(panel.GetComponent<Image>().color.a, 195, t2));
+            ResBtn.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)Mathf.SmoothStep(ResBtn.GetComponent<Text>().color.a, 0, t2));
+            GameObject.Find("CanGroup").GetComponent<CanvasGroup>().alpha = Mathf.SmoothStep(1, 0, t2);
             lasttodestroy = todestroy;//store last destroyed index
             todestroy = (int)Mathf.Lerp(0, allobjects.Length, t2); //new destroy index
-            btnRestart.interactable = false;
+            ResBtn.GetComponent<Button>().interactable = false;
             if (todestroy >= allobjects.Length && t2 >= 1) //end conditions - all of them destroyed and time passed
             {
                 DataHolder.Instance.SaveData();
@@ -113,7 +109,6 @@ public class Playercollision : MonoBehaviour
                 Destroy(allobjects[i]);
             }
         }
-        Debug.Log("selected transitio length: " + DataHolder.Instance.TransitionLength);
         if (movement.enabled == false) //end game
         {
             if (!backToMenu)
@@ -124,12 +119,17 @@ public class Playercollision : MonoBehaviour
                     DataHolder.Instance.UpdateHS((int)(score + ((gameObject.transform.position.z + 4980) / 20)));
                     firsttime = false;
                     startTime = Time.time;
-                    btnRestart.interactable = true;
+                    ResBtn.GetComponent<Button>().interactable = true;
                 }
                 float t = (Time.time - startTime) / DataHolder.Instance.TransitionLength; //calculating time
-                img.color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0, 0.765f, t) * 255)); //panel change color
-                btnRestartText.color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(0, 1, t) * 255)); //restart text color change
+                panel.GetComponent<Image>().color = new Color32(255, 255, 255, (byte)(Mathf.SmoothStep(0, 0.765f, t) * 255)); //panel change color
+                ResBtn.GetComponent<Text>().color = new Color32(208, 12, 12, (byte)(Mathf.SmoothStep(0, 1, t) * 255)); //restart text color change
                 if (Input.GetKeyDown("space")) //if space pressed restarts scene ( same as clicking on button on screen)
+                {
+                    DataHolder.Instance.SaveData();
+                    SceneManager.LoadScene("Endless");
+                }
+                if (Restartbutton)
                 {
                     DataHolder.Instance.SaveData();
                     SceneManager.LoadScene("Endless");
@@ -173,8 +173,10 @@ public class Playercollision : MonoBehaviour
 
         if (gameObject.transform.position.z >= genNewCubesAt) //if crossed the threshold for spawning new cubes - every 50 unity units
         {
-            spawnCubesAt(genNewCubesAt, tospawn);
-            tospawn++;
+            spawnCubesAt(genNewCubesAt, (int)Math.Pow(Mathf.Log(genNewCubesAt + 5150, 200), 5));
+
+
+            //tospawn++;
             genNewCubesAt += 50.0f;
         }
     }
@@ -250,21 +252,17 @@ public class Playercollision : MonoBehaviour
             {
                 selectedcube = 2;
             }
-            else if (random <= 90) // exploding
+            else if (random <= 92) // exploding
             {
                 selectedcube = 3;
             }
-            else if (random <= 94) //shield
+            else if (random <= 96) //shield
             {
                 selectedcube = 4;
             }
-            else if (random <= 96) //score
+            else //score
             {
                 selectedcube = 5;
-            }
-            else //way cleaner
-            {
-                selectedcube = 5; //todo change
             }
             if (selectedcube == 4 || selectedcube == 5)
             {
@@ -279,13 +277,16 @@ public class Playercollision : MonoBehaviour
     }
     void ScoreEffectUpdate(int scoretoshow)
     {
-        System.Random r1 = new System.Random();
-        GameObject insObj = Instantiate(scoreEffect, new Vector3(1060, r1.Next(850, 1000), 0), Quaternion.identity);
-        insObj.transform.SetParent(GameObject.Find("Canvas").transform);
-        insObj.GetComponent<ScoreEffectBehaviour>().ScoreEffectString = scoretoshow.ToString();
+        if (DataHolder.Instance.ScEf == 1)
+        {
+            System.Random r1 = new System.Random();
+            GameObject insObj = Instantiate(scoreEffect, new Vector3(1060, r1.Next(850, 1000), 0), Quaternion.identity);
+            insObj.transform.SetParent(GameObject.Find("Canvas").transform);
+            insObj.GetComponent<ScoreEffectBehaviour>().ScoreEffectString = scoretoshow.ToString();
+        }
     }
-    void PlayerCubeInit()
+    public void restartButton()
     {
-
+        Restartbutton = true;
     }
 }

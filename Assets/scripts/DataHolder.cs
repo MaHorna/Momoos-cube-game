@@ -18,6 +18,7 @@ public class DataHolder : MonoBehaviour
     public bool[] AchievementsDone; //0 base cube ?, 1 score cube pickup,2 shield cube pickup,3distance traveled,4 number of runs,5 shield small cubes,6 flytime
 
     //menu options
+    public int ScEf;
     public string Name;
     public int CubeIndex;
     public int Volume;
@@ -57,6 +58,16 @@ public class DataHolder : MonoBehaviour
         {
             PlayerPrefs.SetInt("Volume", 50);
             Volume = 50;
+        }
+
+        if (PlayerPrefs.HasKey("ScEf"))
+        {
+            ScEf = PlayerPrefs.GetInt("ScEf");
+        }
+        else
+        {
+            PlayerPrefs.SetInt("ScEf", 1);
+            ScEf = 1;
         }
 
         if (PlayerPrefs.HasKey("Fps"))
@@ -205,6 +216,19 @@ public class DataHolder : MonoBehaviour
         tmp1 = GameObject.Find("SliderCube");
         tmpslider = tmp1.GetComponent<Slider>();
         tmpslider.value = CubeIndex;
+
+        tmp1 = GameObject.Find("NameInput");
+        tmp1.GetComponent<InputField>().text = Name;
+
+        tmp1 = GameObject.Find("ScEfToggle");
+        if (ScEf == 1)
+        {
+            tmp1.GetComponent<Toggle>().isOn = true;
+        }
+        else
+        {
+            tmp1.GetComponent<Toggle>().isOn = false;
+        }
     }
     void SaveStringAchDone()
     {
@@ -245,6 +269,17 @@ public class DataHolder : MonoBehaviour
     {
         Volume = (int)newvolume;
     }
+    public void ChangeScEf(bool newscef)
+    {
+        if (newscef)
+        {
+            ScEf = 1;
+        }
+        else
+        {
+            ScEf = 0;
+        }
+    }
     public void ChangeCubeIndex(System.Single newindex)
     {
         CubeIndex = (int)newindex;
@@ -255,18 +290,16 @@ public class DataHolder : MonoBehaviour
     }
     public void ChangeTransLength(System.Single newLength)
     {
-        Debug.Log("tr le : "+TransitionLength);
         TransitionLength = newLength;
-        Debug.Log("rr le now: "+TransitionLength);
     }
     public void SaveOptions()
     {
         PlayerPrefs.SetString("Name", Name);
         PlayerPrefs.SetInt("CubeIndex", CubeIndex);
         PlayerPrefs.SetInt("Volume", Volume);
+        PlayerPrefs.SetInt("ScEf", ScEf);
         PlayerPrefs.SetInt("Fps", fps);
         PlayerPrefs.SetFloat("TransitionLength", TransitionLength);
-        Debug.Log("Saving tr le : "+TransitionLength);
         PlayerPrefs.Save();
     }
 }

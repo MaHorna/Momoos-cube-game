@@ -14,14 +14,15 @@ public class MenuHandler : MonoBehaviour
     //bool endlesstransition,creditstransition,creditstransitionBack = false;
     //bool firsttime,firsttimecre,firsttimecreBack = true;
     int lasttodestroy, todestroy;
+    int leftToRightIndex;
     int transitionIndex; //transition index , 0 none, 1 up - leaderboard, 2 right -  endless, 3 down - credits, 4 left - options
     void Start()
     {
-        
+        leftToRightIndex = 1;
     }
     void FixedUpdate()
     {
-        if (DataHolder.Instance.HSloaded ==true)
+        if (DataHolder.Instance.HSloaded == true)
         {
             highscoreshow.text = "Highscore: " + DataHolder.Instance.Highscore.ToString();
         }
@@ -49,7 +50,7 @@ public class MenuHandler : MonoBehaviour
         else if (transitionIndex == 1) //up
         {
             float t = (Time.time - startTime) / DataHolder.Instance.TransitionLength;
-            MainmenuGroup.transform.position = new Vector3(MainmenuGroup.transform.position.x, Mathf.SmoothStep(mainmenugroupPosY, mainmenugroupPosY-Screen.height, t), MainmenuGroup.transform.position.z);
+            MainmenuGroup.transform.position = new Vector3(MainmenuGroup.transform.position.x, Mathf.SmoothStep(mainmenugroupPosY, mainmenugroupPosY - Screen.height, t), MainmenuGroup.transform.position.z);
             if (t >= 1)
             {
                 transitionIndex = 0;
@@ -99,6 +100,34 @@ public class MenuHandler : MonoBehaviour
                 Destroy(obstacles[i]);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            exit();
+        }
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            left();
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            up();
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if (leftToRightIndex == 1)
+            {
+                loadEndlessMode();
+            }
+            else
+            {
+                right();
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            down();
+        }
     }
 
     public void loadEndlessMode()
@@ -132,6 +161,7 @@ public class MenuHandler : MonoBehaviour
             mainmenugroupPosx = MainmenuGroup.transform.position.x;
             transitionIndex = 2;
             startTime = Time.time;
+            leftToRightIndex++;
         }
     }
     public void down()
@@ -147,6 +177,7 @@ public class MenuHandler : MonoBehaviour
     {
         if (transitionIndex == 0)
         {
+            leftToRightIndex--;
             mainmenugroupPosx = MainmenuGroup.transform.position.x;
             transitionIndex = 4;
             startTime = Time.time;
