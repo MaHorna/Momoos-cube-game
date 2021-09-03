@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 public class DataHolder : MonoBehaviour
 {
     public static DataHolder Instance;
@@ -156,14 +157,20 @@ public class DataHolder : MonoBehaviour
     }
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance == null)
         {
-            Destroy(gameObject);
-            return;
-        }
+            //First run, set the instance
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
 
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance != this)
+        {
+            //Instance is not the same as the one we have, destroy old one, and reset to newest one
+            Destroy(Instance.gameObject);
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
     }
     public void UpdateHS(int newScore)
     {
@@ -194,7 +201,6 @@ public class DataHolder : MonoBehaviour
             if (AchievementsDone[i] == false)
             {
                 tmpimg.color = new Color32(208, 12, 12, 80);
-
             }
             else
             {
@@ -213,9 +219,8 @@ public class DataHolder : MonoBehaviour
         tmpslider = tmp1.GetComponent<Slider>();
         tmpslider.value = Volume;
 
-        tmp1 = GameObject.Find("SliderCube");
-        tmpslider = tmp1.GetComponent<Slider>();
-        tmpslider.value = CubeIndex;
+        tmp1 = GameObject.Find("Toggle" + CubeIndex);
+        tmp1.GetComponent<Toggle>().isOn = true;
 
         tmp1 = GameObject.Find("NameInput");
         tmp1.GetComponent<InputField>().text = Name;
@@ -241,6 +246,7 @@ public class DataHolder : MonoBehaviour
             }
             else
             {
+
                 output += 'n';
             }
         }
@@ -248,18 +254,12 @@ public class DataHolder : MonoBehaviour
     }
     public void SaveData()
     {
-
         PlayerPrefs.SetInt("NumberOfRuns", NumberOfRuns);
         PlayerPrefs.SetInt("scoreCollected", scoreCollected);
         PlayerPrefs.SetInt("shieldCollected", shieldCollected);
         AchCheck();
         SaveStringAchDone();
-
         PlayerPrefs.Save();
-        for (int i = 0; i < AchievementCountables.Length; i++)
-        {
-            Debug.Log(AchievementCountables[i] + "," + AchievementControlValues[i] + "," + AchievementsDone[i]);
-        }
     }
     public void ChangeName(string name)
     {
@@ -280,9 +280,18 @@ public class DataHolder : MonoBehaviour
             ScEf = 0;
         }
     }
-    public void ChangeCubeIndex(System.Single newindex)
+    public void ChangeCubeIndex(int newindex)
     {
-        CubeIndex = (int)newindex;
+
+        if (AchievementsDone[newindex] == false)
+        {
+            GameObject tmp1 = GameObject.Find("Toggle0");
+            tmp1.GetComponent<Toggle>().isOn = true;
+        }
+        else
+        {
+            CubeIndex = newindex;
+        }
     }
     public void ChangeFps(System.Single newFps)
     {
@@ -300,6 +309,12 @@ public class DataHolder : MonoBehaviour
         PlayerPrefs.SetInt("ScEf", ScEf);
         PlayerPrefs.SetInt("Fps", fps);
         PlayerPrefs.SetFloat("TransitionLength", TransitionLength);
+        PlayerPrefs.Save();
+    }
+
+    public void eraseData()
+    {
+        PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
     }
 }

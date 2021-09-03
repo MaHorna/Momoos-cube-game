@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using System.Collections;
 public class Playercollision : MonoBehaviour
 {
     public Material red, blue;
@@ -15,12 +16,13 @@ public class Playercollision : MonoBehaviour
     public GameObject panel;
     public GameObject scoreEffect;
     public GameObject ResBtn;
+    public GameObject Pause;
     bool firsttime = true;
     bool firsttimeback = true;
     bool backToMenu = false;
     bool shield = false;
     bool flying = false;
-    int lasttodestroy, todestroy, tospawn, cubesHitWithShield, smallcubeshitwithShield;
+    int lasttodestroy, todestroy, cubesHitWithShield, smallcubeshitwithShield;
     float genNewCubesAt = -5100.0f;
     float startTime, flytime, score, shieldpickuptime;
     bool Restartbutton = false;
@@ -174,13 +176,35 @@ public class Playercollision : MonoBehaviour
         if (gameObject.transform.position.z >= genNewCubesAt) //if crossed the threshold for spawning new cubes - every 50 unity units
         {
             spawnCubesAt(genNewCubesAt, (int)Math.Pow(Mathf.Log(genNewCubesAt + 5150, 200), 5));
-
-
-            //tospawn++;
             genNewCubesAt += 50.0f;
         }
     }
+    bool pause;
+    private void Update()
+    {
+        if (score >=1)
+        {
+            gameObject.GetComponent<Rigidbody>().freezeRotation = false;
+        }
+        if (Input.GetKeyDown(KeyCode.Space)&&movement.enabled==true)
+        {
+            if (pause)
+            {
+                Time.timeScale = 1;
+                panel.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
+                Pause.GetComponent<Text>().color = new Color32(208, 12, 12, 0);
+                pause = false;
+            }
+            else
+            {
+                panel.GetComponent<Image>().color = new Color32(255, 255, 255, 195);
+                Pause.GetComponent<Text>().color = new Color32(208, 12, 12, 255);
+                Time.timeScale = 0;
+                pause = true;
+            }
 
+        }
+    }
     void OnCollisionEnter(Collision collInfo)
     {
         if (collInfo.collider.tag == "Shield") //when coliding with shield 
@@ -210,17 +234,17 @@ public class Playercollision : MonoBehaviour
         {
             if (!shield)
             {
-                if (DataHolder.Instance.CubeIndex != 3)
-                {
-                    movement.enabled = false;
-                }
                 if (collInfo.gameObject.GetComponent<SelfDestruct>().cubeType == 1 && DataHolder.Instance.CubeIndex == 4)
                 {
                     //number of runs achievemenmt  , not dies to moving cube -  type 1 cube
                 }
-                if (collInfo.gameObject.GetComponent<SelfDestruct>().cubeType == 2 && DataHolder.Instance.CubeIndex == 5)
+                else if (collInfo.gameObject.GetComponent<SelfDestruct>().cubeType == 2 && DataHolder.Instance.CubeIndex == 5)
                 {
                     //small cube shit in one shield achievemenmt  , not dies to small cube -  type 2 cube
+                }
+                else if (DataHolder.Instance.CubeIndex != 3)
+                {
+                    movement.enabled = false;
                 }
             }
             else
