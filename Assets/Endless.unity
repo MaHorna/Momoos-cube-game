@@ -1953,6 +1953,7 @@ GameObject:
   - component: {fileID: 1808384862}
   - component: {fileID: 1808384867}
   - component: {fileID: 1808384868}
+  - component: {fileID: 1808384869}
   m_Layer: 0
   m_Name: Pl
   m_TagString: Player
@@ -2103,6 +2104,20 @@ MonoBehaviour:
     type: 3}
   ResBtn: {fileID: 829643324}
   Pause: {fileID: 37282190}
+--- !u!114 &1808384869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808384861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a925b17e59501cf49b143093d8751585, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cubeImage: []
+  LBholder: {fileID: 0}
 --- !u!1 &1895064475
 GameObject:
   m_ObjectHideFlags: 0

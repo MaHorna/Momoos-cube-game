@@ -88,7 +88,14 @@ public class Playercollision : MonoBehaviour
                 if (movement.enabled == true)
                 {
                     DataHolder.Instance.AchievementCountables[4]++;
-                    DataHolder.Instance.UpdateHS((int)(score + ((gameObject.transform.position.z + 4980) / 20)));
+                    if (DataHolder.Instance.CubeIndex!=4)
+                    {
+                        DataHolder.Instance.UpdateHS((int)(score + ((gameObject.transform.position.z + 4980) / 20)));
+                        if ((int)(score + ((gameObject.transform.position.z + 4980) / 20))>=10)
+                        {
+                            gameObject.GetComponent<DatabaseHandler>().SendData((int)(score + ((gameObject.transform.position.z + 4980) / 20)));
+                        }
+                    }
                 }
                 firsttimeback = false;
                 startTime = Time.time;
@@ -118,7 +125,14 @@ public class Playercollision : MonoBehaviour
                 if (firsttime) //seting time for transitions, and saving score
                 {
                     DataHolder.Instance.AchievementCountables[4]++;
-                    DataHolder.Instance.UpdateHS((int)(score + ((gameObject.transform.position.z + 4980) / 20)));
+                    if (DataHolder.Instance.CubeIndex!=4)
+                    {
+                        DataHolder.Instance.UpdateHS((int)(score + ((gameObject.transform.position.z + 4980) / 20)));
+                        if ((int)(score + ((gameObject.transform.position.z + 4980) / 20))>=10)
+                        {
+                            gameObject.GetComponent<DatabaseHandler>().SendData((int)(score + ((gameObject.transform.position.z + 4980) / 20)));
+                        }
+                    }
                     firsttime = false;
                     startTime = Time.time;
                     ResBtn.GetComponent<Button>().interactable = true;

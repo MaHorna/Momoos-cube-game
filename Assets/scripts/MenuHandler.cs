@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+
 public class MenuHandler : MonoBehaviour
 {
+    public GameObject LB;
     public Text highscoreshow;
     public GameObject MainmenuGroup;
     public GameObject panel;
     public GameObject[] cubes;
     GameObject[] obstacles;
     float mainmenugroupPosx, mainmenugroupPosY, time1, startTime = 0;
-    //bool endlesstransition,creditstransition,creditstransitionBack = false;
-    //bool firsttime,firsttimecre,firsttimecreBack = true;
     int lasttodestroy, todestroy;
     int leftToRightIndex;
     int transitionIndex; //transition index , 0 none, 1 up - leaderboard, 2 right -  endless, 3 down - credits, 4 left - options
+    bool LBfirstTime = true;
     void Start()
     {
         leftToRightIndex = 1;
@@ -49,12 +50,18 @@ public class MenuHandler : MonoBehaviour
         }
         else if (transitionIndex == 1) //up
         {
+            if (LBfirstTime)
+            {
+                LBfirstTime=false;
+                LB.GetComponent<DatabaseHandler>().LBshow();
+            }
             float t = (Time.time - startTime) / DataHolder.Instance.TransitionLength;
             MainmenuGroup.transform.position = new Vector3(MainmenuGroup.transform.position.x, Mathf.SmoothStep(mainmenugroupPosY, mainmenugroupPosY - Screen.height, t), MainmenuGroup.transform.position.z);
             if (t >= 1)
             {
                 transitionIndex = 0;
             }
+
         }
         else if (transitionIndex == 2) //right
         {
